@@ -5,13 +5,14 @@
 
 
     <!-- Género -->
-    <div class="flex flex-col">
-      <label class="font-semibold">Género *</label>
-      <div class="relative">
-        <input v-model="form.genero" @input="validateField('genero')" type="text" placeholder="Ej. Femenino" class="input-text">
-        <ValidationIcon :valid="form.genero !== ''" />
-      </div>
-    </div>
+    <BaseInput
+    v-model="form.genero"
+    label="Género *"
+    placeholder="Ej. Femenino"
+    :isValid="form.genero !== ''"
+    @blur="validateField('genero')"
+    />
+
 
     <!-- Primer Nombre -->
     <BaseInput
@@ -29,45 +30,69 @@
 
     <!-- Fecha de nacimiento -->
     <div class="flex flex-col">
-      <label class="font-semibold">Fecha de nacimiento *</label>
-      <div class="relative">
+    <label class="font-semibold">Fecha de nacimiento *</label>
+    <div class="relative">
         <input
-          v-model="form.fechaNacimiento"
-          @change="validateEdad"
-          type="date"
-          class="input-text"
-        />
+  v-model="form.fechaNacimiento"
+  @change="validateEdad"
+  type="date"
+  :class="[
+    'w-full px-4 py-2 border rounded-xl shadow-sm focus:outline-none transition',
+    edadValida === true
+      ? 'border-green-500 focus:ring-2 focus:ring-green-300'
+      : 'border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-300'
+  ]"
+/>
+
         <ValidationIcon :valid="edadValida" />
-      </div>
+    </div>
     </div>
 
-    <!-- Tipo documento -->
+
+        <!-- Tipo documento -->
     <div class="flex flex-col">
-      <label class="font-semibold">Tipo de documento *</label>
-      <div class="relative">
-        <select v-model="form.tipoDocumento" @change="validateField('tipoDocumento')" class="input-select">
-          <option value="">Seleccione una opción</option>
-          <option value="CC">Cédula de ciudadanía</option>
-          <option value="Pasaporte">Pasaporte</option>
-          <option value="CE">Cédula de extranjería</option>
+    <label class="font-semibold">Tipo de documento *</label>
+    <div class="relative">
+        <select
+        v-model="form.tipoDocumento"
+  @change="validateField('tipoDocumento')"
+  :class="[
+    'w-full px-4 py-2 border rounded-xl shadow-sm bg-white focus:outline-none transition',
+    form.tipoDocumento
+      ? 'border-green-500 focus:ring-2 focus:ring-green-300'
+      : 'border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-300'
+  ]"
+        >
+        <option value="">Seleccione una opción</option>
+        <option value="CC">Cédula de ciudadanía</option>
+        <option value="Pasaporte">Pasaporte</option>
+        <option value="CE">Cédula de extranjería</option>
         </select>
         <ValidationIcon :valid="form.tipoDocumento !== ''" />
-      </div>
     </div>
+    </div>
+
 
     <!-- Número documento -->
     <div class="flex flex-col">
-      <label class="font-semibold">Número de documento *</label>
-      <div class="relative">
+    <label class="font-semibold">Número de documento *</label>
+    <div class="relative">
         <input
-          v-model="form.numeroDocumento"
-          @input="validateNumeroDocumento"
-          type="text"
-          class="input-text"
-        />
+  v-model="form.numeroDocumento"
+  @input="validateNumeroDocumento"
+  type="text"
+  :class="[
+    'w-full px-4 py-2 border rounded-xl shadow-sm focus:outline-none transition',
+    form.numeroDocumento.length >= 5 && /^\d+$/.test(form.numeroDocumento)
+      ? 'border-green-500 focus:ring-2 focus:ring-green-300'
+      : 'border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-300'
+  ]"
+/>
+
         <ValidationIcon :valid="form.numeroDocumento.length >= 5 && /^\d+$/.test(form.numeroDocumento)" />
-      </div>
     </div>
+    </div>
+
  
     <div class="flex p-2 gap-8">
         <!-- Foto Frente -->

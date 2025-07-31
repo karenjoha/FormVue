@@ -1,15 +1,21 @@
 <template>
-  <div class="relative">
-    <label class="block text-sm font-medium mb-1">País *</label>
+  <div class="relative flex flex-col">
+    <label class="block text-sm font-medium mb-1 text-gray-700">País *</label>
 
     <!-- Campo visible -->
     <button
-      @click="open = !open"
-      class="w-full flex justify-between items-center border rounded px-4 py-2 bg-white shadow-sm"
+      @click="toggleDropdown"
+      @blur="markTouched"
+      :class="[
+        'w-full flex justify-between items-center rounded px-4 py-2 bg-white shadow-sm transition-all',
+        touched && isValid === true && 'border border-green-500 ring-2 ring-green-300',
+        touched && isValid === false && 'border border-red-500 ring-2 ring-red-300',
+        !touched && 'border border-gray-300'
+      ]"
     >
       <div class="flex items-center gap-2 truncate">
         <img v-if="selectedFlag" :src="selectedFlag" class="w-5 h-4 object-cover rounded border" />
-        <span class="truncate text-left">{{ selectedName || 'Seleccionar país' }}</span>
+        <span class="truncate text-left text-gray-800">{{ selectedName || 'Seleccionar país' }}</span>
       </div>
       <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -37,17 +43,21 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, computed } from 'vue'
 
 const props = defineProps({
   modelValue: String,
 })
+
 const emit = defineEmits(['update:modelValue'])
 
 const open = ref(false)
 const countries = ref([])
 const selectedName = ref('')
 const selectedFlag = ref('')
+const touched = ref(false)
+
+const isValid = computed(() => !!props.modelValue)
 
 watch(() => props.modelValue, newVal => {
   const pais = countries.value.find(p => p.name === newVal)
@@ -62,6 +72,19 @@ const selectCountry = (pais) => {
   selectedFlag.value = pais.flag
   emit('update:modelValue', pais.name)
   open.value = false
+  touched.value = true
+}
+
+function toggleDropdown() {
+  open.value = !open.value
+}
+
+function markTouched() {
+  // Esperar para que el click en la lista no lo cierre antes
+  setTimeout(() => {
+    open.value = false
+    touched.value = true
+  }, 150)
 }
 
 onMounted(async () => {
